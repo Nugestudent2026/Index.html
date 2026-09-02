@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="om">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EthioLearn - Grade 12 Maths Model Exam</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+        }
+
+        .quiz-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 650px;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #eef2f3;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .header h2 {
+            color: #1e293b;
+            margin: 0 0 5px 0;
+            font-size: 1.5rem;
+        }
+
+        .badge {
+            background-color: #0284c7;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #0284c7;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            color: #334155;
+            margin-bottom: 20px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: #f8fafc;
+            border: 2px solid #cbd5e1;
+            color: #1e293b;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            background-color: #e0f2fe;
+            border-color: #0284c7;
+            color: #0369a1;
+        }
+
+        .option-btn.correct-btn {
+            background-color: #10b981 !important;
+            color: white !important;
+            border-color: #10b981 !important;
+        }
+
+        .option-btn.wrong-btn {
+            background-color: #ef4444 !important;
+            color: white !important;
+            border-color: #ef4444 !important;
+        }
+
+        .feedback-box {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: none;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .next-btn {
+            margin-top: 20px;
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            display: none;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .next-btn:hover {
+            background-color: #0369a1;
+        }
+
+        .result-box {
+            display: none;
+            text-align: center;
+        }
+
+        .result-box h2 {
+            color: #10b981;
+            font-size: 1.8rem;
+        }
+
+        .restart-btn {
+            background-color: #475569;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-card">
+        <div class="header">
+            <h2>EthioLearn: Grade 12 Maths Exam</h2>
+            <span class="badge" id="progress-text">Gaaffii 1 / 20</span>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Box Gaaffiilee -->
+        <div id="quiz-box">
+            <div id="question-text" class="question-text">Gaaffiin asitti ba'a...</div>
+            <div id="options-container" class="options-container"></div>
+            
+            <div id="feedback-box" class="feedback-box"></div>
+
+            <button id="next-btn" class="next-btn" onclick="nextQuestion()">Gaaffii Itti Aanu ➔</button>
+        </div>
+
+        <!-- Box Qabxii Dhumataa -->
+        <div id="result-box" class="result-box">
+            <h2>🎉 Qormaata Xumurtaniirta!</h2>
+            <p id="final-score" style="font-size: 1.4rem; font-weight: bold; color: #334155;"></p>
+            <p id="percentage-text" style="font-size: 1.1rem; color: #64748b;"></p>
+            <button class="restart-btn" onclick="restartQuiz()">Lammata Jalqabi 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        // GAAFFIILEE 20'N SUURAA KEESSAA (BOOKLET CODE 548)
+        const questions = [
+            {
+                question: "22. Consider a circle that has diameter AB of length 8cm. If you fold the circle over AB, then what is the area of the part of the circle on one part of the diameter (in cm²)?",
+                options: ["A. 16π", "B. 64π", "C. 8π", "D. 32π"],
+                correct: 2 // C. 8π
+            },
+            {
+                question: "23. If b is a fixed positive number, which one of the following is true about graphs of the given linear functions?",
+                options: [
+                    "A. The graph of f(x) = bx is horizontal.",
+                    "B. The graph of f(x) = 2x - b is decreasing.",
+                    "C. The graph of f(x) = -2x - b is straight line.",
+                    "D. The graph of f(x) = -2x + b is increasing."
+                ],
+                correct: 2 // C
+            },
+            {
+                question: "24. If a = -2√3 + 3√2 - 2 and b = -3√2 + 2, then a + b is equal to:",
+                options: ["A. -2√3", "B. -2√3 - 6√2 + 4", "C. 2√3", "D. -2√3 + 6√2"],
+                correct: 0 // A
+            },
+            {
+                question: "25. Which one of the following sets represents an empty set?",
+                options: [
+                    "A. {x | x ∈ ℝ and x² ≤ 0}",
+                    "B. {x | x ∈ ℕ and 0 < x ≤ 1}",
+                    "C. {x | x ∈ ℝ and √x² = x}",
+                    "D. {x | x ∈ ℕ and x ≤ -1}"
+                ],
+                correct: 3 // D
+            },
+            {
+                question: "26. Let f(x) = 6x⁶ + 4x⁴ + 3x² + 2 and g(x) = 3x² + 2. Then which one of the following is equal to f(x)/g(x)?",
+                options: ["A. 2x⁴ + 3x² + 2", "B. 3x² + 2", "C. 2x⁴ + 3x² + 1", "D. 2x⁴ + 1"],
+                correct: 3 // D
+            },
+            {
+                question: "27. The solid figure is formed by composing a hemisphere of radius 3 cm on top of a cylinder with base radius 3 cm and height 5 cm. What is the volume of the solid figure (in cm³)?",
+                options: ["A. 63π", "B. 45π", "C. 81π", "D. 60π"],
+                correct: 0 // A
+            },
+            {
+                question: "28. Which one of the following matrices is an invertible matrix?",
+                options: [
+                    "A. [[1/2, 3], [-1, 6]]",
+                    "B. [[2, 2], [1, 1]]",
+                    "C. [[2, 4], [1, 2]]",
+                    "D. [[2, 4], [0, 0]]"
+                ],
+                correct: 0 // A
+            },
+            {
+                question: "29. What does ∑_{n=1}^{5} (2n - 1) represent?",
+                options: [
+                    "A. It is the sum of the first five odd natural numbers.",
+                    "B. It is the sum of the first five natural numbers.",
+                    "C. It is the sum of the first five non-negative integers.",
+                    "D. It is the sum of the first five even natural numbers."
+                ],
+                correct: 0 // A
+            },
+            {
+                question: "30. The school management selects three sections out of ten sections of grade 11 and takes all students in these three sections as a sample. Which sampling technique is used?",
+                options: [
+                    "A. Cluster sampling technique",
+                    "B. Simple random sampling technique",
+                    "C. Multistage sampling technique",
+                    "D. Stratified sampling technique"
+                ],
+                correct: 0 // A
+            },
+            {
+                question: "31. A person deposits Birr 6000 at the end of each year into a saving account that pays 10% interest compounded annually. What is the future value of the annuity after 3 years?",
+                options: ["A. 12,000", "B. 19,860", "C. 14,414", "D. 18,230"],
+                correct: 1 // B
+            },
+            {
+                question: "32. Let f(x) = x³ + 3x² - 9x + 7. Then, the graph of f is decreasing on:",
+                options: ["A. [-3, ∞)", "B. [-3, 1]", "C. (-∞, -3] ∪ [1, ∞)", "D. (-∞, 1]"],
+                correct: 1 // B
+            },
+            {
+                question: "33. When the circle (x - 3)² + (y - 1)² = 1 is reflected on a line y = 2x, then the image of the circle is:",
+                options: [
+                    "A. (x + 3)² + (y + 2)² = 1",
+                    "B. (x + 1)² + (y - 3)² = 1",
+                    "C. (x - 1)² + (y - 2)² = 1",
+                    "D. (x + 3)² + (y - 1)² = 1"
+                ],
+                correct: 1 // B
+            },
+            {
+                question: "34. What is the solution set of the greatest integer equation [1 - x] = 3?",
+                options: ["A. (2, 3]", "B. (-3, -2]", "C. [-2, 3)", "D. (-2, 3)"],
+                correct: 1 // B
+            },
+            {
+                question: "35. Which one of the following is the value of sin(-600°)?",
+                options: ["A. -1/2", "B. 1/2", "C. -√3 / 2", "D. √3 / 2"],
+                correct: 3 // D
+            },
+            {
+                question: "36. Table of scores: [9: 4 students, 7: 2 students, 6: 4 students, 5: 2 students]. What is the mean score of the students?",
+                options: ["A. 2.25", "B. 2.16", "C. 7", "D. 6"],
+                correct: 2 // C (7)
+            },
+            {
+                question: "37. A shopkeeper wants to increase his profit from Birr 3000 to Birr 3600. With what percent will his profit increase?",
+                options: ["A. 60%", "B. 30%", "C. 20%", "D. 25%"],
+                correct: 2 // C (20%)
+            },
+            {
+                question: "38. Let f(x) = x / (x² + 3x + 1). Then, f'(x) is equal to:",
+                options: [
+                    "A. (3x² + 6x + 1) / (x² + 3x + 1)²",
+                    "B. (1 - x²) / (x² + 3x + 1)²",
+                    "C. (-x³ - 3x) / (x² + 3x + 1)²",
+                    "D. 1 / (2x + 3)"
+                ],
+                correct: 1 // B
+            },
+            {
+                question: "39. If u is a vector with initial point (2, 1) and terminal point (-4, 3), then vector u is equal to:",
+                options: ["A. -6i - 2j", "B. -6i + 2j", "C. 6i - 2j", "D. 2i + 6j"],
+                correct: 1 // B
+            },
+            {
+                question: "40. Consider the graph of a power function f passing through (8, 2) and (-8, -2). Which equation represents f?",
+                options: ["A. f(x) = x^(2/3)", "B. f(x) = x^(3/2)", "C. f(x) = x^(1/3)", "D. f(x) = x^(4/3)"],
+                correct: 2 // C
+            },
+            {
+                question: "41. Which statement is true about exponential function f(x) = a^x for a > 1?",
+                options: [
+                    "A. It has y-intercept at the point (0, 1).",
+                    "B. It has x-intercept at the point (1, 0).",
+                    "C. The line x = 0 is the vertical asymptote.",
+                    "D. It is decreasing on ℝ."
+                ],
+                correct: 0 // A
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questionTextElement = document.getElementById("question-text");
+        const optionsContainer = document.getElementById("options-container");
+        const feedbackBox = document.getElementById("feedback-box");
+        const nextButton = document.getElementById("next-btn");
+        const progressText = document.getElementById("progress-text");
+        const progressFill = document.getElementById("progress-fill");
+        const quizBox = document.getElementById("quiz-box");
+        const resultBox = document.getElementById("result-box");
+        const finalScoreElement = document.getElementById("final-score");
+        const percentageText = document.getElementById("percentage-text");
+
+        function loadQuestion() {
+            nextButton.style.display = "none";
+            feedbackBox.style.display = "none";
+            
+            let currentQ = questions[currentQuestionIndex];
+            
+            progressText.innerText = `Gaaffii ${currentQuestionIndex + 1} / ${questions.length}`;
+            progressFill.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            
+            questionTextElement.innerText = currentQ.question;
+            
+            optionsContainer.innerHTML = "";
+            currentQ.options.forEach((optText, index) => {
+                const btn = document.createElement("button");
+                btn.innerText = optText;
+                btn.classList.add("option-btn");
+                btn.onclick = () => selectOption(btn, index);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(selectedBtn, selectedIndex) {
+            let correctIndex = questions[currentQuestionIndex].correct;
+            const allButtons = optionsContainer.children;
+
+            for (let b of allButtons) {
+                b.disabled = true;
+                b.style.cursor = "not-allowed";
+            }
+
+            feedbackBox.style.display = "block";
+
+            if (selectedIndex === correctIndex) {
+                selectedBtn.classList.add("correct-btn");
+                feedbackBox.innerText = "Deebii Sirrii! 🎉 (Correct Answer)";
+                feedbackBox.style.backgroundColor = "#d1fae5";
+                feedbackBox.style.color = "#065f46";
+                score++;
+            } else {
+                selectedBtn.classList.add("wrong-btn");
+                allButtons[correctIndex].classList.add("correct-btn");
+                feedbackBox.innerText = "Dogoggora! ❌ (Wrong Answer)";
+                feedbackBox.style.backgroundColor = "#fee2e2";
+                feedbackBox.style.color = "#991b1b";
+            }
+
+            nextButton.style.display = "block";
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            quizBox.style.display = "none";
+            resultBox.style.display = "block";
+            let percent = Math.round((score / questions.length) * 100);
+            finalScoreElement.innerText = `Qabxii Kee: ${score} / ${questions.length}`;
+            percentageText.innerText = `Qabxii dhibbeentaa: ${percent}%`;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            resultBox.style.display = "none";
+            quizBox.style.display = "block";
+            loadQuestion();
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
